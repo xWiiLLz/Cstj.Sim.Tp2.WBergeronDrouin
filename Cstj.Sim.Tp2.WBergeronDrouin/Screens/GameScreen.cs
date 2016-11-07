@@ -87,7 +87,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
                 this.ScreenManager.AddScreen<EndScreen>();
                 Unload();
             }
-            if(player.Score >=10)
+            if(player.Score >=1000)
             {
                 this.ScreenManager.GameWon = true;
                 this.ScreenManager.AddScreen<EndScreen>();
