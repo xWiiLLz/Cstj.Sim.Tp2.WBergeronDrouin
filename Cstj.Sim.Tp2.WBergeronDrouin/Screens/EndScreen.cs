@@ -12,21 +12,27 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
 {
     public class EndScreen : Screen
     {
-        private Texture2D background;
-
-        public EndScreen(Game game) : base(game)
+        private Texture2D _background;
+        private bool _gameIsWon;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="game">Game variable</param>
+        /// <param name="won">Did the player win the game?</param>
+        public EndScreen(Game game, bool won) : base(game)
         {
+            _gameIsWon = won;
         }
 
         public override void LoadContent()
         {
-            if(ScreenManager.GameWon)
+            if(_gameIsWon)
             {
-                background = LoadTexture(@"Sprites/Backgrounds/victoire");
+                _background = LoadTexture(@"Sprites/Backgrounds/victoire");
             }
             else
             {
-                background = LoadTexture(@"Sprites/Backgrounds/perdu");
+                _background = LoadTexture(@"Sprites/Backgrounds/perdu");
             }
         }
 
@@ -42,7 +48,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
         public override void Draw(GameTime gameTime)
         {
             SpriteBatch.Begin();
-            SpriteBatch.Draw(background, new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height), Color.White);
+            SpriteBatch.Draw(_background, new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height), Color.White);
             SpriteBatch.End();
         }
     }

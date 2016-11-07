@@ -295,3 +295,9 @@
 /processorParam:Quality=Best
 /build:Audio/coin.wav
 
+#begin Audio/hurt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/hurt.wav
+

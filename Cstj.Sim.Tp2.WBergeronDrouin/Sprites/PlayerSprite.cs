@@ -14,17 +14,20 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Sprites
 {
     public class PlayerSprite : CustomAnimatedSprite
     {
-        #region Properties
+        #region Private Attributes
         private enum State { Standing, WalkingLeft, WalkingRight, Jumping };
         private State CurrentState { get; set; }
 
-        public int Score { get; set; }
 
         private Vector2 _initialSpeed, _initialPosition;
         private Animation _walkingAnimation, _jumpingAnimation;
-        private SoundEffect _jumpingSoundEffect, _coinSoundEffect;
+        private SoundEffect _jumpingSoundEffect, _coinSoundEffect, _hurtSoundEffect;
         private SpriteEffects spriteEffect;
         private const float _ACCELERATION = 0.15f;
+        #endregion
+
+        #region Public Properties
+        public int Score { get; set; }
         #endregion
 
         #region Constructors
@@ -119,7 +122,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Sprites
                     _speed.Y = -5f;
                     _initialSpeed.Y = _speed.Y;
                     direction.Y = 1;
-                    PlayJumpSoundEffect();
+                    PlaySoundEffect(_jumpingSoundEffect);
                 }
             }
             else
@@ -146,43 +149,48 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Sprites
             }
 
         }
+
+
+        #region SoundEffects
+
         /// <summary>
         /// Sets the coin sound effect;
         /// </summary>
-        /// <param name="effect"></param>
+        /// <param name="effect">Source of the sound effect</param>
         public void SetCoinSoundEffect(SoundEffect effect)
         {
             _coinSoundEffect = effect;
         }
-        /// <summary>
-        /// Plays the coin sound effect, if it's set
-        /// </summary>
-        private void PlayCoinSoundEffect()
-        {
-            if(_coinSoundEffect != null)
-            {
-                _coinSoundEffect.Play();
-            }
-        }
+
 
         /// <summary>
         /// Sets the jumping sound effect.
         /// </summary>
-        /// <param name="effect">Source of the sound</param>
+        /// <param name="effect">Source of the sound effect</param>
         public void SetJumpSoundEffect(SoundEffect effect)
         {
             _jumpingSoundEffect = effect;
         }
         /// <summary>
-        /// Plays the jumping sound effect, if it's set.
+        /// Sets the hurt sound effect.
         /// </summary>
-        private void PlayJumpSoundEffect()
+        /// <param name="effect">Source of the sound effect</param>
+        public void SetHurtSoundEffect(SoundEffect effect)
         {
-            if(_jumpingSoundEffect != null)
+            _hurtSoundEffect = effect;
+        }
+
+        /// <summary>
+        /// Plays a given sound effect, if it's set
+        /// </summary>
+        private void PlaySoundEffect(SoundEffect effect)
+        {
+            if (effect != null)
             {
-                _jumpingSoundEffect.Play();
+                effect.Play();
             }
         }
+        #endregion
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -195,16 +203,17 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Sprites
             if(sprite.GetType() == typeof(EnnemiSprite))
             {
                 Score -= 100;
+                PlaySoundEffect(_hurtSoundEffect);
             }
             else if(sprite.GetType() == typeof(DiamondSprite))
             {
                 Score += 50;
-                PlayCoinSoundEffect();
+                PlaySoundEffect(_coinSoundEffect);
             }
             else if(sprite.GetType() == typeof(GemSprite))
             {
                 Score += 10;
-                PlayCoinSoundEffect();
+                PlaySoundEffect(_coinSoundEffect);
             }
         }
     }

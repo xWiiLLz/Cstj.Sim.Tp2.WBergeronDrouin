@@ -19,7 +19,6 @@ namespace MonoGame.Tools.Managers
         #endregion
 
         #region Proprietes
-        public bool GameWon { get; set; }
         #endregion
 
         public ScreenManager(Game game, bool isDebuging = false)

@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Audio\coin.wav" />
+    <Content Include="Content\Audio\hurt.wav" />
     <Content Include="Content\Audio\jumping.wav" />
     <Content Include="Content\Sprites\Backgrounds\background.jpg" />
     <Content Include="Content\Sprites\Backgrounds\pause.png" />

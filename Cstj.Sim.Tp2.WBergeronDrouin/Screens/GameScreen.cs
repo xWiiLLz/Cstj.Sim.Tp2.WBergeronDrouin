@@ -15,20 +15,22 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
 {
     public class GameScreen : Screen
     {
+        #region Private attributes
         private PlayerSprite player;
         private Texture2D background, pause, diamond, gem;
-        private SoundEffect jumpSoundEffect, coinSoundEffect;
         private List<Texture2D> texEnnemies;
-        private List<EnnemiSprite> ennemies;
+        private List<EnnemiSprite> enemies;
         private List<Sprite> preciousStones;
         private SpriteFont font;
         private const float MILLISECONDS_PER_SPAWN = 1500;
         private float _millisecondsSinceLastSpawn = 0;
         private const float ENEMY_SCALE = 0.5f;
+        private bool _wonTheGame;
+        #endregion
         public GameScreen(Game game) : base(game)
         {
             texEnnemies = new List<Texture2D>();
-            ennemies = new List<EnnemiSprite>();
+            enemies = new List<EnnemiSprite>();
             preciousStones = new List<Sprite>();
         }
 
@@ -43,10 +45,16 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
             gem = LoadTexture(@"Sprites/gem");
             player = new PlayerSprite(texPlayerIdle, 1, 1, new Vector2(200, 342), new Vector2(3, 3), 1, texPlayerRun, 1, 10, 10);
             player.SetJumpingAnimation(texPlayerJump, 1, 11, 11, 75);
-            jumpSoundEffect = Load<SoundEffect>(@"Audio/jumping");
-            coinSoundEffect = Load<SoundEffect>(@"Audio/coin");
+
+            #region Setting Player sound effects
+            SoundEffect jumpSoundEffect = Load<SoundEffect>(@"Audio/jumping");
+            SoundEffect coinSoundEffect = Load<SoundEffect>(@"Audio/coin");
+            SoundEffect hurtSoundEffect = Load<SoundEffect>(@"Audio/hurt");
             player.SetJumpSoundEffect(jumpSoundEffect);
             player.SetCoinSoundEffect(coinSoundEffect);
+            player.SetHurtSoundEffect(hurtSoundEffect);
+            #endregion
+
             font = Load<SpriteFont>(@"Fonts/Arial8");
 
             // Loading enemies textures
@@ -83,14 +91,14 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
             #region Look if game is finished
             if (player.Score <= -500)
             {
-                this.ScreenManager.GameWon = false;
-                this.ScreenManager.AddScreen<EndScreen>();
+                _wonTheGame = false;
+                this.ScreenManager.AddScreen(new EndScreen(Game, _wonTheGame));
                 Unload();
             }
             if(player.Score >=1000)
             {
-                this.ScreenManager.GameWon = true;
-                this.ScreenManager.AddScreen<EndScreen>();
+                _wonTheGame = true;
+                this.ScreenManager.AddScreen(new EndScreen(Game, _wonTheGame));
                 Unload();
             }
             #endregion
@@ -103,20 +111,20 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
                 _millisecondsSinceLastSpawn -= MILLISECONDS_PER_SPAWN;
             }
 
-            foreach (var enemy in ennemies.ToList())
+            foreach (var enemy in enemies.ToList())
             {
                 //  Check if an enemy collides with the player
                 if (enemy.HitBox.Intersects(player.HitBox))
                 {
                     player.Collides(enemy);
                     //  The enemy needs to be destroyed
-                    ennemies.Remove(enemy);
+                    enemies.Remove(enemy);
                     continue;
                 }
                 enemy.Update(gameTime, Game.Window.ClientBounds);
                 if (enemy.IsDestroyable())
                 {
-                    ennemies.Remove(enemy);
+                    enemies.Remove(enemy);
                 }
             }
 
@@ -195,7 +203,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
                 //  Random speed
                 Vector2 enemySpeed = new Vector2(0, rand.Next(2, 8));
                 EnnemiSprite enemy = new EnnemiSprite(texEnnemies[textureIndex], 1, 1, enemyPosition, enemySpeed, 1, 35, ENEMY_SCALE);
-                ennemies.Add(enemy);
+                enemies.Add(enemy);
             }
             #endregion
         }
@@ -206,7 +214,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
             SpriteBatch.Draw(background, new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height), Color.White);
             player.Draw(SpriteBatch);
             //  Drawing enemies
-            foreach (var ennemi in ennemies)
+            foreach (var ennemi in enemies)
             {
                 ennemi.Draw(SpriteBatch);
             }
