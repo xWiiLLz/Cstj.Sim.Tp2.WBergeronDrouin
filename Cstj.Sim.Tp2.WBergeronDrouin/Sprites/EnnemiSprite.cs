@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Tools.Services;
 using MonoGame.Tools.Sprites;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Sprites
     public class EnnemiSprite : CustomAnimatedSprite
     {
         // Random variable is static so we don't get the same number with close cpu clock
-        static Random random = new Random();
+        //static Random random = new Random();
         private float _scale;
         private bool hasHitGround = false, isDestroyable = false;
         int millisecondsBeforeDestruction, millisecondsSinceHitGround = 0;
@@ -36,7 +37,7 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Sprites
         {
             if (_position.Y >= 358 && !hasHitGround)
             {
-                millisecondsBeforeDestruction = random.Next(300, 1001);
+                millisecondsBeforeDestruction = ServicesHelper.RandomGenerator.Next(300, 1001);
                 hasHitGround = true;
                 _position.Y = 358;
                 _speed = Vector2.Zero;

@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Cstj.Sim.Tp2.WBergeronDrouin.Sprites;
 using MonoGame.Tools.Sprites;
 using Microsoft.Xna.Framework.Audio;
+using MonoGame.Tools.Services;
 
 namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
 {
@@ -155,32 +156,32 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
 
         private void Spawn()
         {
-            Random rand = new Random();
 
             #region Stones
-            //  Amount of stones spawned, random number betwenn 2 and 5
-            int stones = rand.Next(2, 6);
+            //  Amount of stones spawned, ServicesHelper.RandomGeneratorom number betwenn 2 and 5
+            int stones = ServicesHelper.RandomGenerator.Next(2, 6);
             int stoneType = 0;
             for (int i = 0; i < stones; i++)
             {
                 Sprite stone;
 
                 //  One chance on 8 of being a diamond
-                stoneType = rand.Next(1, 9);
+                stoneType = ServicesHelper.RandomGenerator.Next(1, 9);
 
                 //  Random speed
                 Vector2 stoneSpeed, stonePosition;
                 if (stoneType == 1)
                 {
                     //  Is a diamond
-                    stonePosition = new Vector2(rand.Next(0, Game.Window.ClientBounds.Width + 1 - diamond.Width), 0);
-                    stoneSpeed = new Vector2(0, rand.Next(3, 9));
+                    stonePosition = new Vector2(ServicesHelper.RandomGenerator.Next(0, Game.Window.ClientBounds.Width + 1 - diamond.Width), 0);
+                    stoneSpeed = new Vector2(0, ServicesHelper.RandomGenerator.Next(3, 9));
                     stone = new DiamondSprite(diamond, stonePosition, stoneSpeed);
                 }
                 else
                 {
-                    stonePosition = new Vector2(rand.Next(0, Game.Window.ClientBounds.Width + 1 - (gem.Width/5)), 0);
-                    stoneSpeed = new Vector2(0, rand.Next(1, 6));
+                    //  Is a gem
+                    stonePosition = new Vector2(ServicesHelper.RandomGenerator.Next(0, Game.Window.ClientBounds.Width + 1 - (gem.Width/5)), 0);
+                    stoneSpeed = new Vector2(0, ServicesHelper.RandomGenerator.Next(1, 6));
                     stone = new GemSprite(gem, 1, 5, stonePosition, stoneSpeed);
                 }
 
@@ -189,19 +190,19 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
             }
             #endregion
             #region Enemies
-            //  Amount of enemies spawned, random number between 0 and 7
-            int numberOfEnemies = rand.Next(0, 8);
+            //  Amount of enemies spawned, ServicesHelper.RandomGeneratorom number between 0 and 7
+            int numberOfEnemies = ServicesHelper.RandomGenerator.Next(0, 8);
 
             for (int i = 0; i < numberOfEnemies; i++)
             {
                 //  Random number for the texture of the enemy to spawn
-                int textureIndex = rand.Next(0, texEnnemies.Count);
+                int textureIndex = ServicesHelper.RandomGenerator.Next(0, texEnnemies.Count);
 
                 //  Random position
-                Vector2 enemyPosition = new Vector2(rand.Next(0, Game.Window.ClientBounds.Width - (int)(texEnnemies[textureIndex].Width * ENEMY_SCALE)), 0);
+                Vector2 enemyPosition = new Vector2(ServicesHelper.RandomGenerator.Next(0, Game.Window.ClientBounds.Width - (int)(texEnnemies[textureIndex].Width * ENEMY_SCALE)), 0);
 
                 //  Random speed
-                Vector2 enemySpeed = new Vector2(0, rand.Next(2, 8));
+                Vector2 enemySpeed = new Vector2(0, ServicesHelper.RandomGenerator.Next(2, 8));
                 EnnemiSprite enemy = new EnnemiSprite(texEnnemies[textureIndex], 1, 1, enemyPosition, enemySpeed, 1, 35, ENEMY_SCALE);
                 enemies.Add(enemy);
             }
@@ -225,7 +226,12 @@ namespace Cstj.Sim.Tp2.WBergeronDrouin.Screens
                 stone.Draw(SpriteBatch);
             }
             //  Affichage du score
-            SpriteBatch.DrawString(font, String.Format("Score : {0}", player.Score), Vector2.Zero, Color.Black);
+            Color score;
+            if (player.Score > 0)
+                score = Color.LightGreen;
+            else
+                score = Color.OrangeRed;
+            SpriteBatch.DrawString(font, String.Format("Score : {0}", player.Score), Vector2.Zero, score);
             if (State == ScreenState.Pause)
             {
                 SpriteBatch.Draw(pause, new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height), Color.White);
